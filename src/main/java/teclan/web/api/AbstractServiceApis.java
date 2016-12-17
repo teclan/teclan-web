@@ -6,8 +6,10 @@ import static spark.Spark.post;
 import static spark.Spark.put;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.javalite.common.Inflector;
 import org.slf4j.Logger;
@@ -86,12 +88,24 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
                 if (request.queryParams("limit") != null) {
                     limit = Integer.valueOf(request.queryParams("limit"));
                 }
-                if (request.queryParams("condition") != null) {
-                    Map<String, Object> condition = GsonUtils.toMap(
-                            new JSONObject(request.queryParams("condition"))
-                                    .toString());
-                    query = generateQuery(condition);
-                    parameters=  generateParameters(condition);
+                
+               
+                Object[] params =  request.queryParams().toArray(); 
+                
+                Map<String,String> paramsMap = new LinkedHashMap<String,String>();
+                
+                
+                for(Object param :params){
+                	if("page".equals(param) || "limit".equals(param)){
+                		continue;
+                	}
+                	paramsMap.put((String)param,request.queryParams((String)param));
+                	
+                }
+                
+                if (paramsMap != null) {
+                    query = generateQuery(paramsMap);
+                    parameters=  generateParameters(paramsMap);
                 }
                 
                 return getService().fetch(page, limit, query, parameters)
@@ -165,19 +179,28 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
     public abstract ActiveJdbcService<T> getService();
 
-    private String generateQuery(Map<String, Object> condition) {
+    private String generateQuery(Map<String, String> condition) {
+    	
+    	 if(condition.size()==1){
+    		 for (String key : condition.keySet()) {
+    			 return String.format("%s like ? ", key);
+    	        }
+         }
+    	 
         List<String> columns = new ArrayList<String>();
+        
         for (String key : condition.keySet()) {
             columns.add(key);
         }
-        return String.join(" = ? and ", columns);
+       
+        return String.join(" like ? and ", columns);
     }
 
-    private Object[] generateParameters(Map<String, Object> condition) {
+    private Object[] generateParameters(Map<String, String> condition) {
         Object[] parameters = new Object[condition.size()];
         int index = 0;
         for (String key : condition.keySet()) {
-            parameters[index] = condition.get(key);
+            parameters[index] = "%"+condition.get(key)+"%";
             index++;
         }
         return parameters;

@@ -25,7 +25,6 @@ public class ApiTest {
 	private final String GET_ALL_URL = "http://localhost:%d/%s/all";
 	private final String FETCH_BY_ID_URL = "http://localhost:%d/%s/fetch/%d";
 	private final String FETCH_WITH_QUERY_URL = "http://localhost:%d/%s/fetch";
-	private   final String  QUERY_DATA = "page=all";
 	
 	@Test
 	public void fetchWithQuery(){
@@ -37,7 +36,7 @@ public class ApiTest {
 			LOGGER.info("\n=================");
 			
 			LOGGER.info("{}", new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()),
-			        form("page=1&limit=1")).object().toString());
+			        form("page=1&limit=2&content=测试")).object().toString());
 			
 			
 		} catch ( Exception e) {

@@ -1,4 +1,4 @@
-package teclan.web;
+package teclan.web.example;
 
 import static spark.Spark.after;
 import static spark.Spark.before;
@@ -9,17 +9,19 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import teclan.web.api.ContentApis;
+import teclan.web.RestapiApplication;
 import teclan.web.db.Database;
+import teclan.web.example.api.achieve.DefaultContentServerApis;
 
 @Singleton
 public class Application extends RestapiApplication {
-    private final Logger LOG = LoggerFactory.getLogger(Application.class);
+    private final Logger             LOG = LoggerFactory
+            .getLogger(Application.class);
 
     @Inject
-    private Database     database;
+    private Database                 database;
     @Inject
-    private ContentApis  contentApis;
+    private DefaultContentServerApis contentApis;
 
     @Override
     public void creatApis() {
@@ -30,6 +32,7 @@ public class Application extends RestapiApplication {
     public void filter() {
         before((request, response) -> {
             database.openDatabase();
+            // ContentRecord.create("content", "测试" + new Date()).save();
         });
         after((request, response) -> {
             database.closeDatabase();

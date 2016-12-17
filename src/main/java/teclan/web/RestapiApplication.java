@@ -22,7 +22,7 @@ public abstract class RestapiApplication implements SparkApplication {
     public abstract void filter();
 
     /**
-     * 设置允许访问的 IP，默认所有 IP 军可访问
+     * 设置允许访问的 IP，默认所有 IP 均可访问
      * 
      * @param host
      */

@@ -1,4 +1,4 @@
-package teclan.web;
+package teclan.web.example;
 
 
 import com.google.inject.AbstractModule;

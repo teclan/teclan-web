@@ -88,9 +88,7 @@ public abstract class AbstracActiveJdbcService<T extends ActiveRecord>
         findById(id).delete();
     }
 
-    @Override
-    public void deleteAll(Long... ids) {
-        List<Long> toBeRemoved = Arrays.asList(ids);
+    private void deleteAll(List<Long> toBeRemoved) {
         if (toBeRemoved.isEmpty()) {
             ModelDelegate.findAll(getModelClass())
                     .forEach(r -> toBeRemoved.add(r.getLongId()));
@@ -108,6 +106,21 @@ public abstract class AbstracActiveJdbcService<T extends ActiveRecord>
         if (!errors.isEmpty()) {
             throw new RuntimeException(String.join(", ", errors));
         }
+    }
+
+    @Override
+    public void deleteAll(Long... ids) {
+        List<Long> toBeRemoved = Arrays.asList(ids);
+        deleteAll(toBeRemoved);
+    }
+
+    @Override
+    public void deleteAll(String... ids) {
+        List<Long> toBeRemoved = new ArrayList<Long>();
+        for (String id : ids) {
+            toBeRemoved.add(Long.valueOf(id));
+        }
+        deleteAll(toBeRemoved);
     }
 
     @Override

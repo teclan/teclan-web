@@ -18,6 +18,8 @@ public interface ActiveJdbcService<T extends ActiveRecord> {
 
     public void deleteAll(Long... ids);
 
+    public void deleteAll(String... ids);
+
     public T findById(long integerIdParam);
 
     public T update(long id, Object... namesAndValues);

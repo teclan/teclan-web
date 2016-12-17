@@ -1,10 +1,10 @@
 package teclan.web.db.model;
 
-import org.javalite.activejdbc.Model;
+import teclan.utils.db.ActiveRecord;
 
-public class ContentRecord extends Model{
-	 static{
-	        validatePresenceOf("content");
-	    }  
+public class ContentRecord extends ActiveRecord {
+    static {
+        validatePresenceOf("content");
+    }
 
 }

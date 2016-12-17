@@ -129,4 +129,13 @@ public class Database {
     public void closeDatabase(String name) {
         new DB(name).close();
     }
+
+    public boolean hasConnect() {
+        return hasConnect("default");
+    }
+
+    public boolean hasConnect(String connect) {
+        return new DB(connect).hasConnection();
+
+    }
 }

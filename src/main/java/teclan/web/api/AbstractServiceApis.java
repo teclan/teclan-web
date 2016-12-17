@@ -33,7 +33,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         get(getResource() + "/all", (request, response) -> {
             List<T> results = getService().all();
             if (results != null && !results.isEmpty()) {
-                return generateResult(results);
+                return generateResult(results).toString();
             } else {
                 LOGGER.warn("\n无查询结果 {}", getResource() + "/all");
                 return new JSONObject();
@@ -64,7 +64,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
          * limit : 每页多少条记录
          * pages : 总共有多少页
          */
-        get(getResource() + "/fetch", (request, response) -> {
+        post(getResource() + "/fetch", (request, response) -> {
             if ("all".equals(request.queryParams("page"))) {
 
                 List<T> results = getService().all();
@@ -78,22 +78,22 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
             } else {
                 int page = 1;
                 int limit = 10;
-                String query = "1=1";
-                Object[] parameters = null;
+                String query = "1 = ?";
+                Object[] parameters = new Object[]{1};
                 if (request.queryParams("page") != null) {
                     page = Integer.valueOf(request.queryParams("page"));
                 }
                 if (request.queryParams("limit") != null) {
                     limit = Integer.valueOf(request.queryParams("limit"));
                 }
-
                 if (request.queryParams("condition") != null) {
                     Map<String, Object> condition = GsonUtils.toMap(
                             new JSONObject(request.queryParams("condition"))
                                     .toString());
                     query = generateQuery(condition);
-                    generateParameters(condition);
+                    parameters=  generateParameters(condition);
                 }
+                
                 return getService().fetch(page, limit, query, parameters)
                         .toJson();
             }
@@ -197,10 +197,8 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
     }
 
     private JSONObject generateResult(T record) {
-        JSONArray items = new JSONArray();
-        items.put(record.toJson());
         try {
-            return new JSONObject().put(getResource(), items);
+            return new JSONObject().put(getResource(), record.toJson());
         } catch (JSONException e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -39,6 +39,8 @@ public abstract class AbstracActiveJdbcService<T extends ActiveRecord>
 
     @Override
     public Page<T> fetch(int page, int limit, String query, Object... params) {
+    	
+    
         @SuppressWarnings("unchecked")
         Paginator<T> paginator = new Paginator<>(getModelClass(), limit, query,
                 params).orderBy("created_at DESC");

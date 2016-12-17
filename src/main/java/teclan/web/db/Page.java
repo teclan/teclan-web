@@ -47,6 +47,8 @@ public class Page<T extends ActiveRecord> {
 
         map.put("meta", meta);
 
+        map.put("data", maps);
+
         return GsonUtils.toJson(map);
     }
 }

@@ -124,6 +124,12 @@ public abstract class AbstracActiveJdbcService<T extends ActiveRecord>
         return all();
     }
 
+    @Override
+    public List<T> sync(long id, Map<String, Object> attributes) {
+        update(id, attributes);
+        return all();
+    }
+
     protected boolean isMatch(T record, Map<String, Object> attributes) {
         // NOTE
         // By Teclan

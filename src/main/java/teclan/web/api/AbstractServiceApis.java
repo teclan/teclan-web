@@ -115,9 +115,15 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
         // 添加记录
         post(getResource() + "/new", (request, response) -> {
-            Map<String, Object> attributes = GsonUtils
-                    .toMap(new JSONObject(request.body()).get(getResource())
-                            .toString());
+        	
+            Object[] params =  request.queryParams().toArray(); 
+            
+            Map<String,Object> attributes = new LinkedHashMap<String,Object>();
+            
+            for(Object param:params){
+            	attributes.put((String)param,request.queryParams((String)param));
+            }
+        	
             getService().create(attributes);
             return request.body();
         });

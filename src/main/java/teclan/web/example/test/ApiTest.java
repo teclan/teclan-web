@@ -2,9 +2,9 @@ package teclan.web.example.test;
 
 import static us.monoid.web.Resty.form;
 import static us.monoid.web.Resty.put;
+import static us.monoid.web.Resty.*;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,7 +20,6 @@ import com.google.gson.GsonBuilder;
 import teclan.utils.GsonUtils;
 import teclan.web.example.Main;
 import us.monoid.json.JSONArray;
-import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
 import us.monoid.web.Content;
 import us.monoid.web.Resty;
@@ -35,8 +33,23 @@ public class ApiTest {
 	private final String ADD_RECORD_WITH_POST_URL = "http://localhost:%d/%s/new";
 	private final String ADD_RECORD_WITH_PUT_URL = "http://localhost:%d/%s/new";
 	private final String SYS_RECORD_BY_ID_URL = "http://localhost:%d/%s/sys/%d";
-	private final String SYS_MUTIL_RECORD__URL = "http://localhost:%d/%s/sys";
+	private final String SYS_MUTIL_RECORD_URL = "http://localhost:%d/%s/sys";
+	private final String DELETE_RECORD_BY_ID_URL = "http://localhost:%d/%s/delete/%d";
 	
+	
+	
+	 @Test
+	    public void deleteById() {
+	        Resty resty = new Resty();
+	        try {
+	            LOGGER.info("{}", resty
+	                    .text(String.format(DELETE_RECORD_BY_ID_URL, Main.PORT,  getResource(),2), delete()));
+	        } catch (Exception e) {
+	        }
+
+	    }
+
+	 
 	@Test
 	public void sysMutilRecord() {
 
@@ -52,9 +65,6 @@ public class ApiTest {
 		
 		models.add(model1);
 		models.add(model2);
-		
-		Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss")
-				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
 		try {
 			
@@ -67,10 +77,9 @@ public class ApiTest {
 			
 			object.put(getResource(), maps);
 
-			new Resty().text(String.format(SYS_MUTIL_RECORD__URL, Main.PORT, getResource() ),
+			new Resty().text(String.format(SYS_MUTIL_RECORD_URL, Main.PORT, getResource() ),
 					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

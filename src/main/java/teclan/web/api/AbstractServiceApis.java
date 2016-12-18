@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import teclan.utils.GsonUtils;
 import teclan.utils.db.ActiveRecord;
@@ -28,11 +30,15 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         implements ServiceApis {
     private final Logger LOGGER = LoggerFactory
             .getLogger(AbstractServiceApis.class);
+    
+    @Inject
+	@Named("config.base-url.name-space")
+	private String nameSpace;
 
     @Override
     public void initApis() {
         // 查询所有
-        get(getResource() + "/all", (request, response) -> {
+        get(getUrlPrefix() + "/all", (request, response) -> {
             List<T> results = getService().all();
             if (results != null && !results.isEmpty()) {
                 return generateResult(results).toString();
@@ -43,7 +49,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         });
 
         // 按id查询
-        get(getResource() + "/fetch/:id", (request, response) -> {
+        get(getUrlPrefix() + "/fetch/:id", (request, response) -> {
             long id = Long.valueOf(request.params(":id"));
             T record = getService().findById(id);
             if (record != null) {
@@ -66,7 +72,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
          * limit : 每页多少条记录
          * pages : 总共有多少页
          */
-        post(getResource() + "/fetch", (request, response) -> {
+        post(getUrlPrefix() + "/fetch", (request, response) -> {
             if ("all".equals(request.queryParams("page"))) {
 
                 List<T> results = getService().all();
@@ -114,7 +120,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         });
 
         // 添加记录
-        post(getResource() + "/new", (request, response) -> {
+        post(getUrlPrefix() + "/new", (request, response) -> {
         	
             Object[] params =  request.queryParams().toArray(); 
             
@@ -129,7 +135,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         });
         
         // 添加记录
-        put(getResource() + "/new", (request, response) -> {
+        put(getUrlPrefix() + "/new", (request, response) -> {
        
         	LOGGER.info(request.body());
         	   Map<String, Object> attributes = GsonUtils
@@ -142,7 +148,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         
 
         // 指定 id 更新记录
-        put(getResource() + "/sys/:id", (request, response) -> {
+        put(getUrlPrefix() + "/sys/:id", (request, response) -> {
             long id = Long.valueOf(request.params(":id"));
             Map<String, Object> attributes = GsonUtils
                     .toMap(new JSONObject(request.body()).get(getResource())
@@ -157,7 +163,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         });
 
         // 批量更新记录
-        put(getResource() + "/sys", (request, response) -> {
+        put(getUrlPrefix() + "/sys", (request, response) -> {
             List<Map<String, Object>> maps = GsonUtils.fromJson(request.body(),getResource(),
                     new TypeToken<List<Map<String, Object>>>() {
                         private static final long serialVersionUID = 3731405824720413383L;
@@ -173,7 +179,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         });
 
         // 指定 id 删除记录
-        delete(getResource() + "/delete/:id", (request, response) -> {
+        delete(getUrlPrefix() + "/delete/:id", (request, response) -> {
             long id = Long.valueOf(request.params(":id"));
             getService().delete(id);
             return new JSONObject();
@@ -181,7 +187,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
         // 批量删除记录
         // 如果 ids 不存在，将删除所有记录
-        delete(getResource() + "/deletes/:ids", (request, response) -> {
+        delete(getUrlPrefix() + "/deletes/:ids", (request, response) -> {
             String[] ids = null;
             if (request.params("ids") == null) {
                 getService().deleteAll(ids);
@@ -196,6 +202,10 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
     public abstract String getResource();
 
     public abstract ActiveJdbcService<T> getService();
+    
+    public String getUrlPrefix(){
+    	return nameSpace+"/"+getResource();
+    }
 
     private String generateQuery(Map<String, String> condition) {
     	

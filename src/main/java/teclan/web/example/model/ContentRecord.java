@@ -1,4 +1,4 @@
-package teclan.web.db.model;
+package teclan.web.example.model;
 
 import teclan.utils.db.ActiveRecord;
 

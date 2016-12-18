@@ -42,7 +42,7 @@ public class ApiTest {
         Resty resty = new Resty();
         try {
             LOGGER.info("{}", resty
-                    .text(String.format(DELETE_MUTIL_RECORD_BY_IDS_URL, Main.PORT,  getResource(),"1,2,3,35"), delete()));
+                    .text(String.format(DELETE_MUTIL_RECORD_BY_IDS_URL, getPort(),  getUrlResource(),"1,2,3,35"), delete()));
         } catch (Exception e) {
         }
 
@@ -54,7 +54,7 @@ public class ApiTest {
 	        Resty resty = new Resty();
 	        try {
 	            LOGGER.info("{}", resty
-	                    .text(String.format(DELETE_RECORD_BY_ID_URL, Main.PORT,  getResource(),1), delete()));
+	                    .text(String.format(DELETE_RECORD_BY_ID_URL, getPort(),  getUrlResource(),1), delete()));
 	        } catch (Exception e) {
 	        }
 
@@ -86,9 +86,9 @@ public class ApiTest {
 			
 			JSONObject object = new JSONObject();
 			
-			object.put(getResource(), maps);
+			object.put(getUrlResource(), maps);
 
-			new Resty().text(String.format(SYS_MUTIL_RECORD_URL, Main.PORT, getResource() ),
+			new Resty().text(String.format(SYS_MUTIL_RECORD_URL, getPort(), getUrlResource() ),
 					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,9 +106,9 @@ public class ApiTest {
 
 		try {
 			JSONObject object = new JSONObject();
-			object.put(getResource(), GSON.toJson(model));
+			object.put(getUrlResource(), GSON.toJson(model));
 
-			new Resty().text(String.format(SYS_RECORD_BY_ID_URL, Main.PORT, getResource(),model.id),
+			new Resty().text(String.format(SYS_RECORD_BY_ID_URL, getPort(), getUrlResource(),model.id),
 					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -125,9 +125,9 @@ public class ApiTest {
 
 		try {
 			JSONObject object = new JSONObject();
-			object.put(getResource(), GSON.toJson(model));
+			object.put(getUrlResource(), GSON.toJson(model));
 
-			new Resty().text(String.format(ADD_RECORD_WITH_PUT_URL, Main.PORT, getResource()),
+			new Resty().text(String.format(ADD_RECORD_WITH_PUT_URL, getPort(), getUrlResource()),
 					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -138,7 +138,7 @@ public class ApiTest {
 	@Test
 	public void newWithPost() {
 		try {
-			new Resty().text(String.format(ADD_RECORD_WITH_POST_URL, Main.PORT, getResource()),
+			new Resty().text(String.format(ADD_RECORD_WITH_POST_URL, getPort(), getUrlResource()),
 					form("name=Teclan&content=lvzaotou"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -149,12 +149,12 @@ public class ApiTest {
 	public void fetchWithQuery() {
 		try {
 			LOGGER.info("{}",
-					new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()), form("page=all"))
+					new Resty().json(String.format(FETCH_WITH_QUERY_URL, getPort(), getUrlResource()), form("page=all"))
 							.object().toString());
 
 			LOGGER.info("\n=================");
 
-			LOGGER.info("{}", new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()),
+			LOGGER.info("{}", new Resty().json(String.format(FETCH_WITH_QUERY_URL, getPort(), getUrlResource()),
 					form("page=1&limit=2&content=测试")).object().toString());
 
 		} catch (Exception e) {
@@ -166,10 +166,8 @@ public class ApiTest {
 	@Test
 	public void getAll() {
 		try {
-			JSONObject json = new Resty().json(String.format(GET_ALL_URL, Main.PORT, getResource())).object();
-			LOGGER.info("=={}", json);
-			JSONArray array = ((JSONArray) json.get("content"));
-
+			JSONObject json = new Resty().json(String.format(GET_ALL_URL, getPort(), getUrlResource())).object();
+			JSONArray array = ((JSONArray) json.get(getResource()));
 			for (int i = 0; i < array.length(); i++) {
 				LOGGER.info("{}", array.get(i));
 
@@ -185,7 +183,7 @@ public class ApiTest {
 	@Test
 	public void fectById() {
 		try {
-			String json = new Resty().json(String.format(FETCH_BY_ID_URL, Main.PORT, getResource(), 2)).object()
+			String json = new Resty().json(String.format(FETCH_BY_ID_URL, getPort(), getUrlResource(), 2)).object()
 					.toString();
 			LOGGER.info("\n{}", json);
 			ContentModel model = GsonUtils.fromJson(json, ContentModel.class);
@@ -195,7 +193,15 @@ public class ApiTest {
 		}
 	}
 
-	private String getResource() {
-		return "content";
+	private String getUrlResource() {
+		return "api/v1/contents";
+	}
+	
+	private String getResource(){
+	 return "contents";
+	}
+	
+	private int getPort(){
+		return 3770;
 	}
 }

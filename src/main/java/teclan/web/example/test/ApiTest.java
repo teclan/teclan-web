@@ -32,89 +32,102 @@ public class ApiTest {
 	private final String FETCH_WITH_QUERY_URL = "http://localhost:%d/%s/fetch";
 	private final String ADD_RECORD_WITH_POST_URL = "http://localhost:%d/%s/new";
 	private final String ADD_RECORD_WITH_PUT_URL = "http://localhost:%d/%s/new";
-	
-	
+	private final String SYS_RECORD_BY_ID_URL = "http://localhost:%d/%s/sys/%d";
+
 	@Test
-	public void newWithPut(){
+	public void sysById() {
+
 		ContentModel model = new ContentModel();
-		
-		Gson GSON = new GsonBuilder()
-	            .setDateFormat("yyyy-MM-dd HH:mm:ss")
-	            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-	            .create();
-		
-		 try {
-		JSONObject object = new JSONObject();
-		object.put(getResource(), GSON.toJson(model));
-		
-		  
-			  new Resty().text(
-			           String.format(ADD_RECORD_WITH_PUT_URL, Main.PORT, getResource()), put(new Content("application/json; charset=utf-8",
-			        		   object.toString().getBytes("UTF-8"))));
-		} catch ( Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void newWithPost(){
+		model.id=1;
+		model.name="lu fei";
+		Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss")
+				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+
 		try {
-			 new Resty().text(String.format(ADD_RECORD_WITH_POST_URL, Main.PORT, getResource()),
-			        form("name=Teclan&content=lvzaotou")) ;
-		} catch (IOException  e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Test
-	public void fetchWithQuery(){
-        try {
-			LOGGER.info("{}", new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()),
-			        form("page=all")).object().toString());
-			
-			LOGGER.info("\n=================");
-			
-			LOGGER.info("{}", new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()),
-			        form("page=1&limit=2&content=测试")).object().toString());
-			
-			
-		} catch ( Exception e) {
+			JSONObject object = new JSONObject();
+			object.put(getResource(), GSON.toJson(model));
+
+			new Resty().text(String.format(SYS_RECORD_BY_ID_URL, Main.PORT, getResource(),model.id),
+					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
 
 	@Test
-    public void getAll() {
-        try {
-        	JSONObject json = new Resty()
-                    .json(String.format(GET_ALL_URL, Main.PORT, getResource())).object();
-        	LOGGER.info("=={}",json);
-        	JSONArray array = ((JSONArray)json.get("content"));
+	public void newWithPut() {
+		ContentModel model = new ContentModel();
 
-        	for(int i=0;i<array.length();i++){
-        		LOGGER.info("{}",array.get(i));
+		Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss")
+				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
-    			ContentModel model = GsonUtils.fromJson(array.get(i).toString(),
-    					ContentModel.class);
-    			LOGGER.info("model : {}", model.toString());
-        	}
-        	
+		try {
+			JSONObject object = new JSONObject();
+			object.put(getResource(), GSON.toJson(model));
 
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
+			new Resty().text(String.format(ADD_RECORD_WITH_PUT_URL, Main.PORT, getResource()),
+					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void newWithPost() {
+		try {
+			new Resty().text(String.format(ADD_RECORD_WITH_POST_URL, Main.PORT, getResource()),
+					form("name=Teclan&content=lvzaotou"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void fetchWithQuery() {
+		try {
+			LOGGER.info("{}",
+					new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()), form("page=all"))
+							.object().toString());
+
+			LOGGER.info("\n=================");
+
+			LOGGER.info("{}", new Resty().json(String.format(FETCH_WITH_QUERY_URL, Main.PORT, getResource()),
+					form("page=1&limit=2&content=测试")).object().toString());
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void getAll() {
+		try {
+			JSONObject json = new Resty().json(String.format(GET_ALL_URL, Main.PORT, getResource())).object();
+			LOGGER.info("=={}", json);
+			JSONArray array = ((JSONArray) json.get("content"));
+
+			for (int i = 0; i < array.length(); i++) {
+				LOGGER.info("{}", array.get(i));
+
+				ContentModel model = GsonUtils.fromJson(array.get(i).toString(), ContentModel.class);
+				LOGGER.info("model : {}", model.toString());
+			}
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+	}
 
 	@Test
 	public void fectById() {
 		try {
-			String json = new Resty().json(String.format(FETCH_BY_ID_URL, Main.PORT, getResource(), 2)).object().toString();
+			String json = new Resty().json(String.format(FETCH_BY_ID_URL, Main.PORT, getResource(), 2)).object()
+					.toString();
 			LOGGER.info("\n{}", json);
-			ContentModel model = GsonUtils.fromJson(json,
-					ContentModel.class);
+			ContentModel model = GsonUtils.fromJson(json, ContentModel.class);
 			LOGGER.info("model : {}", model.toString());
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

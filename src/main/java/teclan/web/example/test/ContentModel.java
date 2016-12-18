@@ -5,12 +5,12 @@ import java.util.Date;
 import com.google.gson.annotations.Expose;
 
 public class ContentModel {
-	private long id;
-	private String name;
-	private String content;
-	private String description;
-	private String createdAt;
-	private String updatedAt;
+	public long id;
+	public String name;
+	public String content;
+	public String description;
+	public String createdAt;
+	public String updatedAt;
 
 	
 	public ContentModel(){

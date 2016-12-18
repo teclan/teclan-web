@@ -51,6 +51,7 @@ public abstract class AbstracActiveJdbcService<T extends ActiveRecord>
     @Override
     public T create(Map<String, Object> attributes) {
         try {
+        	attributes.remove("id");
             T created = getModelClass().newInstance();
             created.fromMap(attributes);
             created.save();

@@ -127,6 +127,19 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
             getService().create(attributes);
             return request.body();
         });
+        
+        // 添加记录
+        put(getResource() + "/new", (request, response) -> {
+       
+        	LOGGER.info(request.body());
+        	   Map<String, Object> attributes = GsonUtils
+                       .toMap(new JSONObject(request.body()).get(getResource())
+                               .toString());
+        	   
+            getService().create(attributes);
+            return request.body();
+        });
+        
 
         // 指定 id 更新记录
         put(getResource() + "/sys/:id", (request, response) -> {

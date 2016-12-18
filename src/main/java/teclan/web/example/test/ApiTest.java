@@ -35,7 +35,18 @@ public class ApiTest {
 	private final String SYS_RECORD_BY_ID_URL = "http://localhost:%d/%s/sys/%d";
 	private final String SYS_MUTIL_RECORD_URL = "http://localhost:%d/%s/sys";
 	private final String DELETE_RECORD_BY_ID_URL = "http://localhost:%d/%s/delete/%d";
+	private final String DELETE_MUTIL_RECORD_BY_IDS_URL = "http://localhost:%d/%s/deletes/%s";
 	
+	@Test
+    public void deleteMutilById() {
+        Resty resty = new Resty();
+        try {
+            LOGGER.info("{}", resty
+                    .text(String.format(DELETE_MUTIL_RECORD_BY_IDS_URL, Main.PORT,  getResource(),"1,2,3,35"), delete()));
+        } catch (Exception e) {
+        }
+
+    }
 	
 	
 	 @Test
@@ -43,7 +54,7 @@ public class ApiTest {
 	        Resty resty = new Resty();
 	        try {
 	            LOGGER.info("{}", resty
-	                    .text(String.format(DELETE_RECORD_BY_ID_URL, Main.PORT,  getResource(),2), delete()));
+	                    .text(String.format(DELETE_RECORD_BY_ID_URL, Main.PORT,  getResource(),1), delete()));
 	        } catch (Exception e) {
 	        }
 

@@ -181,7 +181,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
         // 批量删除记录
         // 如果 ids 不存在，将删除所有记录
-        delete(getResource() + "/delete", (request, response) -> {
+        delete(getResource() + "/deletes/:ids", (request, response) -> {
             String[] ids = null;
             if (request.params("ids") == null) {
                 getService().deleteAll(ids);

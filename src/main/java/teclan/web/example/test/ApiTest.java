@@ -5,6 +5,8 @@ import static us.monoid.web.Resty.put;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -33,6 +35,45 @@ public class ApiTest {
 	private final String ADD_RECORD_WITH_POST_URL = "http://localhost:%d/%s/new";
 	private final String ADD_RECORD_WITH_PUT_URL = "http://localhost:%d/%s/new";
 	private final String SYS_RECORD_BY_ID_URL = "http://localhost:%d/%s/sys/%d";
+	private final String SYS_MUTIL_RECORD__URL = "http://localhost:%d/%s/sys";
+	
+	@Test
+	public void sysMutilRecord() {
+
+		ContentModel model1 = new ContentModel();
+		model1.id=1;
+		model1.name="na mei";
+		
+		ContentModel model2 = new ContentModel();
+		model2.id=2;
+		model2.name="shan zhi";
+		
+		List<ContentModel> models =new ArrayList<ContentModel>();
+		
+		models.add(model1);
+		models.add(model2);
+		
+		Gson GSON = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss")
+				.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+
+		try {
+			
+			 List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
+		
+			maps.add(GsonUtils.toMap(GsonUtils.toJson(model1)));
+			maps.add(GsonUtils.toMap(GsonUtils.toJson(model2)));
+			
+			JSONObject object = new JSONObject();
+			
+			object.put(getResource(), maps);
+
+			new Resty().text(String.format(SYS_MUTIL_RECORD__URL, Main.PORT, getResource() ),
+					put(new Content("application/json; charset=utf-8", object.toString().getBytes("UTF-8"))));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void sysById() {

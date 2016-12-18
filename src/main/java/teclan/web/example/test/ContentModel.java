@@ -4,6 +4,8 @@ import java.util.Date;
 
 import com.google.gson.annotations.Expose;
 
+import us.monoid.json.JSONObject;
+
 public class ContentModel {
 	public long id;
 	public String name;
@@ -18,7 +20,6 @@ public class ContentModel {
 		content="测试 "+new Date();
 		description="无";
 	}
-	
 	
 	public String toString() {
 		return String.format("id = %s,name = %s,content = %s,description = %s,createAt = %s,updatedAt = %s", id, name,

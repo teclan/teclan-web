@@ -158,8 +158,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
         // 批量更新记录
         put(getResource() + "/sys", (request, response) -> {
-            List<Map<String, Object>> maps = GsonUtils.fromJson(request.body(),
-                    Inflector.pluralize(getResource()),
+            List<Map<String, Object>> maps = GsonUtils.fromJson(request.body(),getResource(),
                     new TypeToken<List<Map<String, Object>>>() {
                         private static final long serialVersionUID = 3731405824720413383L;
                     }.getType());

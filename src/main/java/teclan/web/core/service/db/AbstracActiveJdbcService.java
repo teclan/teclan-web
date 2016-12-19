@@ -1,4 +1,4 @@
-package teclan.web.db.service.achieve;
+package teclan.web.core.service.db;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.reflect.TypeToken;
 
 import teclan.utils.db.ActiveRecord;
-import teclan.web.db.Page;
-import teclan.web.db.service.ActiveJdbcService;
+import teclan.web.core.db.Page;
 
 public abstract class AbstracActiveJdbcService<T extends ActiveRecord>
         implements ActiveJdbcService<T> {

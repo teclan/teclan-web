@@ -1,6 +1,6 @@
 package teclan.web.example.service.achieve;
 
-import teclan.web.db.service.achieve.AbstracActiveJdbcService;
+import teclan.web.core.service.db.AbstracActiveJdbcService;
 import teclan.web.example.model.ContentRecord;
 import teclan.web.example.service.ContentRecordService;
 

@@ -1,4 +1,4 @@
-package teclan.web.media;
+package teclan.web.core.service.media;
 
 import com.google.inject.ImplementedBy;
 

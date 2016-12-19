@@ -2,7 +2,7 @@ package teclan.web.example.service;
 
 import com.google.inject.ImplementedBy;
 
-import teclan.web.db.service.ActiveJdbcService;
+import teclan.web.core.service.db.ActiveJdbcService;
 import teclan.web.example.model.ContentRecord;
 import teclan.web.example.service.achieve.DefaultContentRecordService;
 

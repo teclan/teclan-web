@@ -27,7 +27,7 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
             .getLogger(AbstractMediaServiceApis.class);
 
     @Inject
-    @Named("config.base-url.name-space")
+    @Named("config.server.name-space")
     private String       nameSpace;
     @Inject
     @Named("config.media.downloads")
@@ -125,12 +125,22 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
                         StandardCopyOption.REPLACE_EXISTING);
 
             }
+
+            handle(new File(filePath));
+
             return new JSONObject();
         });
 
     }
 
     public abstract String getResource();
+
+    /**
+     * 处理上传的文件
+     * 
+     * @param file
+     */
+    public abstract void handle(File file);
 
     public String getUrlPrefix() {
         return nameSpace + "/" + getResource();

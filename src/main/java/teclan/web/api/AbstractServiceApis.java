@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.javalite.common.Inflector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +19,7 @@ import com.google.inject.name.Named;
 
 import teclan.utils.GsonUtils;
 import teclan.utils.db.ActiveRecord;
-import teclan.web.db.service.ActiveJdbcService;
+import teclan.web.core.service.db.ActiveJdbcService;
 import us.monoid.json.JSONArray;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
@@ -30,10 +28,10 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         implements ServiceApis {
     private final Logger LOGGER = LoggerFactory
             .getLogger(AbstractServiceApis.class);
-    
+
     @Inject
-	@Named("config.base-url.name-space")
-	private String nameSpace;
+    @Named("config.server.name-space")
+    private String       nameSpace;
 
     @Override
     public void initApis() {
@@ -87,33 +85,32 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
                 int page = 1;
                 int limit = 10;
                 String query = "1 = ?";
-                Object[] parameters = new Object[]{1};
+                Object[] parameters = new Object[] { 1 };
                 if (request.queryParams("page") != null) {
                     page = Integer.valueOf(request.queryParams("page"));
                 }
                 if (request.queryParams("limit") != null) {
                     limit = Integer.valueOf(request.queryParams("limit"));
                 }
-                
-               
-                Object[] params =  request.queryParams().toArray(); 
-                
-                Map<String,String> paramsMap = new LinkedHashMap<String,String>();
-                
-                
-                for(Object param :params){
-                	if("page".equals(param) || "limit".equals(param)){
-                		continue;
-                	}
-                	paramsMap.put((String)param,request.queryParams((String)param));
-                	
+
+                Object[] params = request.queryParams().toArray();
+
+                Map<String, String> paramsMap = new LinkedHashMap<String, String>();
+
+                for (Object param : params) {
+                    if ("page".equals(param) || "limit".equals(param)) {
+                        continue;
+                    }
+                    paramsMap.put((String) param,
+                            request.queryParams((String) param));
+
                 }
-                
+
                 if (paramsMap != null) {
                     query = generateQuery(paramsMap);
-                    parameters=  generateParameters(paramsMap);
+                    parameters = generateParameters(paramsMap);
                 }
-                
+
                 return getService().fetch(page, limit, query, parameters)
                         .toJson();
             }
@@ -121,31 +118,31 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
         // 添加记录
         post(getUrlPrefix() + "/new", (request, response) -> {
-        	
-            Object[] params =  request.queryParams().toArray(); 
-            
-            Map<String,Object> attributes = new LinkedHashMap<String,Object>();
-            
-            for(Object param:params){
-            	attributes.put((String)param,request.queryParams((String)param));
+
+            Object[] params = request.queryParams().toArray();
+
+            Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+
+            for (Object param : params) {
+                attributes.put((String) param,
+                        request.queryParams((String) param));
             }
-        	
+
             getService().create(attributes);
             return request.body();
         });
-        
+
         // 添加记录
         put(getUrlPrefix() + "/new", (request, response) -> {
-       
-        	LOGGER.info(request.body());
-        	   Map<String, Object> attributes = GsonUtils
-                       .toMap(new JSONObject(request.body()).get(getResource())
-                               .toString());
-        	   
+
+            LOGGER.info(request.body());
+            Map<String, Object> attributes = GsonUtils
+                    .toMap(new JSONObject(request.body()).get(getResource())
+                            .toString());
+
             getService().create(attributes);
             return request.body();
         });
-        
 
         // 指定 id 更新记录
         put(getUrlPrefix() + "/sys/:id", (request, response) -> {
@@ -164,8 +161,8 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
 
         // 批量更新记录
         put(getUrlPrefix() + "/sys", (request, response) -> {
-            List<Map<String, Object>> maps = GsonUtils.fromJson(request.body(),getResource(),
-                    new TypeToken<List<Map<String, Object>>>() {
+            List<Map<String, Object>> maps = GsonUtils.fromJson(request.body(),
+                    getResource(), new TypeToken<List<Map<String, Object>>>() {
                         private static final long serialVersionUID = 3731405824720413383L;
                     }.getType());
 
@@ -202,25 +199,25 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
     public abstract String getResource();
 
     public abstract ActiveJdbcService<T> getService();
-    
-    public String getUrlPrefix(){
-    	return nameSpace+"/"+getResource();
+
+    public String getUrlPrefix() {
+        return nameSpace + "/" + getResource();
     }
 
     private String generateQuery(Map<String, String> condition) {
-    	
-    	 if(condition.size()==1){
-    		 for (String key : condition.keySet()) {
-    			 return String.format("%s like ? ", key);
-    	        }
-         }
-    	 
+
+        if (condition.size() == 1) {
+            for (String key : condition.keySet()) {
+                return String.format("%s like ? ", key);
+            }
+        }
+
         List<String> columns = new ArrayList<String>();
-        
+
         for (String key : condition.keySet()) {
             columns.add(key);
         }
-       
+
         return String.join(" like ? and ", columns);
     }
 
@@ -228,7 +225,7 @@ public abstract class AbstractServiceApis<T extends ActiveRecord>
         Object[] parameters = new Object[condition.size()];
         int index = 0;
         for (String key : condition.keySet()) {
-            parameters[index] = "%"+condition.get(key)+"%";
+            parameters[index] = "%" + condition.get(key) + "%";
             index++;
         }
         return parameters;

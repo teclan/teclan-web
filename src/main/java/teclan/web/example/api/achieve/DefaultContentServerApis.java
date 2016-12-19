@@ -3,7 +3,7 @@ package teclan.web.example.api.achieve;
 import com.google.inject.Inject;
 
 import teclan.web.api.AbstractServiceApis;
-import teclan.web.db.service.ActiveJdbcService;
+import teclan.web.core.service.db.ActiveJdbcService;
 import teclan.web.example.api.ContentServerApis;
 import teclan.web.example.model.ContentRecord;
 import teclan.web.example.service.ContentRecordService;

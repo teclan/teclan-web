@@ -1,10 +1,11 @@
-package teclan.web;
+package teclan.web.core;
 
 import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.ipAddress;
 import static spark.Spark.port;
 import static spark.Spark.staticFiles;
+import static spark.Spark.threadPool;
 
 import java.io.File;
 
@@ -12,19 +13,28 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import spark.servlet.SparkApplication;
-import teclan.web.db.Database;
-import teclan.web.media.MediaServiceApis;
+import teclan.web.core.db.Database;
+import teclan.web.core.service.media.MediaServiceApis;
 
 public abstract class RestapiApplication implements SparkApplication {
     @Inject
-    @Named("config.base-url.ip")
+    @Named("config.server.ip")
     private String           host;
     @Inject
-    @Named("config.base-url.port")
+    @Named("config.server.port")
     private int              port;
     @Inject
     @Named("config.media.public")
     private String           publicDir;
+    @Inject
+    @Named("config.server.max-threads")
+    private int              maxThreads;
+    @Inject
+    @Named("config.server.min-threads")
+    private int              minThreads = 2;
+    @Inject
+    @Named("config.server.time-out-millis")
+    private int              timeOutMillis;
 
     @Inject
     private Database         database;
@@ -33,8 +43,7 @@ public abstract class RestapiApplication implements SparkApplication {
 
     @Override
     public void init() {
-        ipAddress(host);
-        port(port);
+        defaultConfig();
         defaultApis();
         creatApis();
         filter();
@@ -48,6 +57,12 @@ public abstract class RestapiApplication implements SparkApplication {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    private void defaultConfig() {
+        ipAddress(host);
+        port(port);
+        threadPool(maxThreads, minThreads, timeOutMillis);
     }
 
     private void defaultApis() {

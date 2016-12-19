@@ -1,4 +1,4 @@
-package teclan.web;
+package teclan.web.core;
 
 import static spark.Spark.after;
 import static spark.Spark.before;

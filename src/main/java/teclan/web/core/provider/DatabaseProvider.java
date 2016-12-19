@@ -1,4 +1,4 @@
-package teclan.web.provider;
+package teclan.web.core.provider;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -6,8 +6,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 
-import teclan.web.db.DataSource;
-import teclan.web.db.Database;
+import teclan.web.core.db.DataSource;
+import teclan.web.core.db.Database;
 
 
 @Singleton

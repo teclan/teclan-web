@@ -3,7 +3,7 @@ package teclan.web.example;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import teclan.web.RestapiApplication;
+import teclan.web.core.RestapiApplication;
 import teclan.web.example.api.ContentServerApis;
 
 @Singleton

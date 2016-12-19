@@ -1,10 +1,10 @@
-package teclan.web.db.service;
+package teclan.web.core.service.db;
 
 import java.util.List;
 import java.util.Map;
 
 import teclan.utils.db.ActiveRecord;
-import teclan.web.db.Page;
+import teclan.web.core.db.Page;
 
 public interface ActiveJdbcService<T extends ActiveRecord> {
 

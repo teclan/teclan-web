@@ -1,4 +1,4 @@
-package teclan.web.db;
+package teclan.web.core.db;
 
 public class DataSource {
 

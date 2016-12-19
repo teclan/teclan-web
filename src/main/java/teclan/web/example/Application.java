@@ -1,17 +1,16 @@
 package teclan.web.example;
 
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import teclan.web.RestapiApplication;
-import teclan.web.example.api.achieve.DefaultContentServerApis;
+import teclan.web.example.api.ContentServerApis;
 
 @Singleton
 public class Application extends RestapiApplication {
 
     @Inject
-    private DefaultContentServerApis contentApis;
+    private ContentServerApis contentApis;
 
     @Override
     public void creatApis() {

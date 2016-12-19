@@ -4,10 +4,12 @@ import com.google.inject.Inject;
 
 import teclan.web.api.AbstractServiceApis;
 import teclan.web.db.service.ActiveJdbcService;
+import teclan.web.example.api.ContentServerApis;
 import teclan.web.example.model.ContentRecord;
 import teclan.web.example.service.ContentRecordService;
 
-public class DefaultContentServerApis extends AbstractServiceApis<ContentRecord> {
+public class DefaultContentServerApis extends AbstractServiceApis<ContentRecord>
+        implements ContentServerApis {
 
     @Inject
     private ContentRecordService service;

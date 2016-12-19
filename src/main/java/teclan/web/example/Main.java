@@ -12,4 +12,5 @@ public class Main {
         Application application = injector.getInstance(Application.class);
         application.init();
     }
+
 }

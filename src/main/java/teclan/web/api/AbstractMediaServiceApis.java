@@ -10,9 +10,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.MultipartConfigElement;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,6 +136,37 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
             return new JSONObject();
         });
 
+        post(getUrlPrefix() + "/upload/batch", (request, response) -> {
+
+            request.attribute("org.eclipse.jetty.multipartConfig",
+                    new MultipartConfigElement("/temp"));
+
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            // upload.setHeaderEncoding("GBK");
+
+            List<FileItem> items = upload.parseRequest(request.raw());
+            List<File> files = new ArrayList<File>();
+
+            for (FileItem item : items) {
+
+                String path = item.getName();
+
+                String filePath = getUploadDir() + File.separator + path;
+
+                try (InputStream input = item.getInputStream()) {
+                    Files.copy(input, new File(filePath).toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+
+                }
+                files.add(new File(filePath));
+            }
+
+            handle(files);
+
+            return new JSONObject();
+        });
+
     }
 
     public abstract String getResource();
@@ -141,6 +177,13 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
      * @param file
      */
     public abstract void handle(File file);
+
+    /**
+     * 处理上传的多个文件
+     * 
+     * @param file
+     */
+    public abstract void handle(List<File> files);
 
     public String getUrlPrefix() {
         return nameSpace + "/" + getResource();

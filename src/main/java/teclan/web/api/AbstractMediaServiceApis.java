@@ -1,11 +1,17 @@
 package teclan.web.api;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
+import javax.servlet.MultipartConfigElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +29,18 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
     @Inject
     @Named("config.base-url.name-space")
     private String       nameSpace;
-
     @Inject
     @Named("config.media.downloads")
     private String       downloads;
-
     @Inject
     @Named("config.media.downloads-param")
-    private String       fileName;
+    private String       downloadsParam;
+    @Inject
+    @Named("config.media.upload")
+    private String       upload;
+    @Inject
+    @Named("config.media.upload-param")
+    private String       uploadParam;
 
     @Override
     public void initApis() {
@@ -38,7 +48,7 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
         // filename 的值即为需要下载的文件
         get(getUrlPrefix() + "/downloads", (request, response) -> {
             try {
-                String fileName = request.queryParams(getDownloadsFileName());
+                String fileName = request.queryParams(getDownloadsParam());
                 File file = new File(
                         getDownloadsDir() + File.separator + fileName);
                 response.raw().setContentType("application/octet-stream");
@@ -69,7 +79,7 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
          */
         get(getUrlPrefix() + "/downloads/batch", (request, response) -> {
             try {
-                String fileName = request.queryParams(getDownloadsFileName());
+                String fileName = request.queryParams(getDownloadsParam());
                 response.raw().setContentType("application/octet-stream");
 
                 // // IE浏览器
@@ -99,6 +109,25 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
             return new JSONObject();
         });
 
+        post(getUrlPrefix() + "/upload", (request, response) -> {
+
+            request.attribute("org.eclipse.jetty.multipartConfig",
+                    new MultipartConfigElement("/temp"));
+
+            String path = request.raw().getPart(getUploadParam())
+                    .getSubmittedFileName();
+
+            String filePath = getUploadDir() + File.separator + path;
+
+            try (InputStream input = request.raw().getPart(getUploadParam())
+                    .getInputStream()) {
+                Files.copy(input, new File(filePath).toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
+
+            }
+            return new JSONObject();
+        });
+
     }
 
     public abstract String getResource();
@@ -111,9 +140,19 @@ public abstract class AbstractMediaServiceApis implements ServiceApis {
         return System.getProperty("user.dir") + File.separator + downloads;
     }
 
-    private String getDownloadsFileName() {
-        return fileName;
+    private String getDownloadsParam() {
+        return downloadsParam;
+    }
 
+    private String getUploadParam() {
+        return uploadParam;
+    }
+
+    private String getUploadDir() {
+        String uploadDir = System.getProperty("user.dir") + File.separator
+                + upload;
+        new File(uploadDir).mkdirs();
+        return uploadDir;
     }
 
 }
